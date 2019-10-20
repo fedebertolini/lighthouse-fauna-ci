@@ -1,0 +1,27 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+workflows:
+   version: 2
+   hourly:
+     triggers:
+       - schedule:
+           cron: "0 0 0/6 ? * * *"
+           filters:
+             branches:
+               only:
+                 - master
+     jobs:
+       - run-lighthouse
+
+jobs:
+  run-lighthouse:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:10-browsers
+    steps:
+      - checkout
+      - run: sudo npm i -g lighthouse-fauna --no-progress
+      - run: lighthouse-fauna https://en.wikipedia.org/wiki/Uruguay --runs=7 --page-id=wikipedia-uruguay --fauna-key="$FAUNA_KEY"
